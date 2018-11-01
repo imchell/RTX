@@ -2,6 +2,7 @@
 name = "CrowdNav-Evolutionary"
 
 execution_strategy = {
+    "parallel_execution_of_individuals": False, # if this is True, CrowdNav should be run with 'python parallel.py <no>'
     "ignore_first_n_results": 50, #10000,
     "sample_size": 50, #10000,
     "type": "evolutionary",

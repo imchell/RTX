@@ -19,12 +19,18 @@ from deap import base, creator
 
 crowdnav_instance_number = 0
 
-
 def start_evolutionary_strategy(wf):
+    global original_primary_data_provider_topic
+    global original_change_provider_topic
+
     info("> ExecStrategy   | Evolutionary", Fore.CYAN)
     optimizer_method = wf.execution_strategy["optimizer_method"]
     wf.totalExperiments = wf.execution_strategy["optimizer_iterations"]
     info("> Optimizer      | " + optimizer_method, Fore.CYAN)
+
+    original_primary_data_provider_topic = wf.primary_data_provider["instance"].topic
+    original_change_provider_topic = wf.change_provider["instance"].topic
+
 
     # we look at the ranges the user has specified in the knobs
     knobs = wf.execution_strategy["knobs"]
@@ -159,6 +165,7 @@ def evaluate(individual, vars, ranges, wf):
 
 def evolutionary_execution(wf, opti_values, variables):
     global crowdnav_instance_number
+
     """ this is the function we call and that returns a value for optimization """
     knob_object = recreate_knob_from_optimizer_values(variables, opti_values)
     # create a new experiment to run in execution
@@ -166,15 +173,16 @@ def evolutionary_execution(wf, opti_values, variables):
 
     # TODO do we need clones of the workflow so that we do not overwrite the topic for the multiple instances?
     # TODO where do we start multiple threads to call the experimentFunction concurrently, once for each experiment and crowdnav instance?
-    wf.primary_data_provider["instance"].topic = "crowd-nav-trips-" + str(crowdnav_instance_number)
-    wf.change_provider["instance"].topic = "crowd-nav-commands-" + str(crowdnav_instance_number)
-    info("Listering on " + wf.primary_data_provider["instance"].topic)
-    info("Posting changes to " + wf.change_provider["instance"].topic)
-    crowdnav_instance_number = crowdnav_instance_number + 1
-    if crowdnav_instance_number == wf.execution_strategy["population_size"]:
-        crowdnav_instance_number = 0
-
     # TODO should we create new/fresh CrowdNav instances for each iteration/generation? Otherwise, we use the same instance to evaluate across interations/generations to evaluate individiuals.
+
+    if wf.execution_strategy["parallel_execution_of_individuals"]:
+        wf.primary_data_provider["instance"].topic = original_primary_data_provider_topic + "-" + str(crowdnav_instance_number)
+        wf.change_provider["instance"].topic = original_change_provider_topic + "-" + str(crowdnav_instance_number)
+        info("Listering on " + wf.primary_data_provider["instance"].topic)
+        info("Posting changes to " + wf.change_provider["instance"].topic)
+        crowdnav_instance_number = crowdnav_instance_number + 1
+        if crowdnav_instance_number == wf.execution_strategy["population_size"]:
+            crowdnav_instance_number = 0
 
     exp["ignore_first_n_results"] = wf.execution_strategy["ignore_first_n_results"]
     exp["sample_size"] = wf.execution_strategy["sample_size"]
