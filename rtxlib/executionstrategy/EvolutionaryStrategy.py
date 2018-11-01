@@ -169,7 +169,8 @@ def evolutionary_execution(wf, opti_values, variables):
     wf.primary_data_provider["topic"] = "crowd-nav-trips-" + str(crowdnav_instance_number)
     wf.change_provider["topic"] = "crowd-nav-commands-" + str(crowdnav_instance_number)
     crowdnav_instance_number = crowdnav_instance_number + 1
-    # TODO reset crowdnav_instance_number after each generation?
+    # TODO reset crowdnav_instance_number after each iteration/generation?
+    # TODO should we create new/fresh CrowdNav instances for each iteration/generation? Otherwise, we use the same instance to evaluate across interations/generations to evaluate individiuals.
 
     exp["ignore_first_n_results"] = wf.execution_strategy["ignore_first_n_results"]
     exp["sample_size"] = wf.execution_strategy["sample_size"]
