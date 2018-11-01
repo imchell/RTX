@@ -140,13 +140,13 @@ def random_knob_config(variables, range_tubles):
 
 def mutate(individual, variables, range_tubles):
     i = random.randint(0, len(individual) - 1)
-    if vars[i] == "route_random_sigma" or vars[i] == "exploration_percentage" \
-            or vars[i] == "max_speed_and_length_factor" or vars[i] == "average_edge_duration_factor":
+    if variables[i] == "route_random_sigma" or variables[i] == "exploration_percentage" \
+            or variables[i] == "max_speed_and_length_factor" or variables[i] == "average_edge_duration_factor":
         value = random.uniform(range_tubles[i][0], range_tubles[i][1])
         value = round(value, 2)
         individual[i] = value
-    elif vars[i] == "freshness_update_factor" or vars[i] == "freshness_cut_off_value" \
-            or vars[i] == "re_route_every_ticks":
+    elif variables[i] == "freshness_update_factor" or variables[i] == "freshness_cut_off_value" \
+            or variables[i] == "re_route_every_ticks":
         value = random.randint(range_tubles[i][0], range_tubles[i][1])
         individual[i] = value
 
@@ -166,10 +166,14 @@ def evolutionary_execution(wf, opti_values, variables):
 
     # TODO do we need clones of the workflow so that we do not overwrite the topic for the multiple instances?
     # TODO where do we start multiple threads to call the experimentFunction concurrently, once for each experiment and crowdnav instance?
-    wf.primary_data_provider["topic"] = "crowd-nav-trips-" + str(crowdnav_instance_number)
-    wf.change_provider["topic"] = "crowd-nav-commands-" + str(crowdnav_instance_number)
+    wf.primary_data_provider["instance"].topic = "crowd-nav-trips-" + str(crowdnav_instance_number)
+    wf.change_provider["instance"].topic = "crowd-nav-commands-" + str(crowdnav_instance_number)
+    info("Listering on " + wf.primary_data_provider["instance"].topic)
+    info("Posting changes to " + wf.change_provider["instance"].topic)
     crowdnav_instance_number = crowdnav_instance_number + 1
-    # TODO reset crowdnav_instance_number after each iteration/generation?
+    if crowdnav_instance_number == wf.execution_strategy["population_size"]:
+        crowdnav_instance_number = 0
+
     # TODO should we create new/fresh CrowdNav instances for each iteration/generation? Otherwise, we use the same instance to evaluate across interations/generations to evaluate individiuals.
 
     exp["ignore_first_n_results"] = wf.execution_strategy["ignore_first_n_results"]
