@@ -58,6 +58,7 @@ def nsga2(variables, range_tuples, wf):
     # tools.selNSGA2(...)
 
 
+# TODO check if all individuals have the same ordering of genes
 def ga(variables, range_tubles, wf):
     optimizer_iterations = wf.execution_strategy["optimizer_iterations"]
     population_size = wf.execution_strategy["population_size"]
