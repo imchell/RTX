@@ -2,9 +2,14 @@
 name = "CrowdNav-Evolutionary"
 
 execution_strategy = {
-    "ignore_first_n_results": 10000,
-    "sample_size": 10000,
+    "ignore_first_n_results": 50, #10000,
+    "sample_size": 50, #10000,
     "type": "evolutionary",
+    "optimizer_method": "GA",
+    "optimizer_iterations": 10, # number of generations
+    "population_size": 5, # number of individuals in the population
+    "crossover_probability": 0.5,
+    "mutation_probability": 0.2,
     "knobs": {
         "route_random_sigma": (0.0, 0.3),
         "exploration_percentage": (0.0, 0.3),
@@ -41,7 +46,9 @@ change_provider = {
 }
 
 
+# defines what the experimentFunction returns
 def evaluator(resultState, wf):
+    # avg oveahead computed by primary_data_reducer
     return resultState["avg_overhead"]
 
 

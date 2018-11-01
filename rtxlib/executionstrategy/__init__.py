@@ -19,7 +19,7 @@ def run_execution_strategy(wf):
             start_sequential_strategy(wf)
 
         elif wf.execution_strategy["type"] == "evolutionary":
-            log_results(wf.folder, wf.execution_strategy["knobs"][0].keys() + ["result"], append=False)
+            log_results(wf.folder, wf.execution_strategy["knobs"].keys() + ["result"], append=False)
             start_evolutionary_strategy(wf)
 
         elif wf.execution_strategy["type"] == "self_optimizer":
