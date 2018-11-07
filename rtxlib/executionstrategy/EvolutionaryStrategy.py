@@ -171,7 +171,6 @@ def evolutionary_execution(wf, opti_values, variables):
     # create a new experiment to run in execution
     exp = dict()
 
-    # TODO do we need clones of the workflow so that we do not overwrite the topic for the multiple instances?
     # TODO where do we start multiple threads to call the experimentFunction concurrently, once for each experiment and crowdnav instance?
     # TODO should we create new/fresh CrowdNav instances for each iteration/generation? Otherwise, we use the same instance to evaluate across interations/generations to evaluate individiuals.
 
