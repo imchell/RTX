@@ -34,7 +34,7 @@ def start_evolutionary_strategy(wf):
 
     # we look at the ranges the user has specified in the knobs
     knobs = wf.execution_strategy["knobs"]
-    # we create a list of variable names and a list of knob (from,to)
+    # we create a list of variable/knob names and a list of ranges (from,to) for each knob
     variables = []
     range_tuples = []
     # we fill the arrays and use the index to map from gauss-optimizer-value to variable
@@ -64,7 +64,6 @@ def nsga2(variables, range_tuples, wf):
     # tools.selNSGA2(...)
 
 
-# TODO check if all individuals have the same ordering of genes
 def ga(variables, range_tubles, wf):
     optimizer_iterations = wf.execution_strategy["optimizer_iterations"]
     population_size = wf.execution_strategy["population_size"]
