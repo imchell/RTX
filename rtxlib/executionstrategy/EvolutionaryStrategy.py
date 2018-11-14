@@ -64,7 +64,7 @@ def nsga2(variables, range_tuples, wf):
     # tools.selNSGA2(...)
 
 
-def ga(variables, range_tubles, wf):
+def ga(variables, range_tuples, wf):
     optimizer_iterations = wf.execution_strategy["optimizer_iterations"]
     population_size = wf.execution_strategy["population_size"]
     crossover_probability = wf.execution_strategy["crossover_probability"]
@@ -77,7 +77,7 @@ def ga(variables, range_tubles, wf):
     creator.create("Individual", list, fitness=creator.FitnessMin)
 
     toolbox = base.Toolbox()
-    toolbox.register("individual", random_knob_config, variables=variables, range_tubles=range_tubles)
+    toolbox.register("individual", random_knob_config, variables=variables, range_tubles=range_tuples)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
     pop = toolbox.population(n=population_size)
@@ -86,9 +86,9 @@ def ga(variables, range_tubles, wf):
     info("Population: " + str(pop))
 
     toolbox.register("mate", tools.cxOnePoint)
-    toolbox.register("mutate", mutate, variables=variables, range_tubles=range_tubles)
+    toolbox.register("mutate", mutate, variables=variables, range_tubles=range_tuples)
     toolbox.register("select", tools.selTournament, tournsize=3)
-    toolbox.register("evaluate", evaluate, vars=variables, ranges=range_tubles, wf=wf)
+    toolbox.register("evaluate", evaluate, vars=variables, ranges=range_tuples, wf=wf)
 
     # Evaluate the entire population
     fitnesses = map(toolbox.evaluate, pop)
