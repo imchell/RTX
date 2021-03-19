@@ -20,7 +20,7 @@ def experimentFunction(wf, exp):
 
     # start
     info(">")
-    info("> KnobValues     | " + str(exp["knobs"]))
+    #info("> KnobValues     | " + str(exp["knobs"]))
     # create new state
     exp["state"] = wf.state_initializer(dict(),wf)
 
@@ -46,6 +46,7 @@ def experimentFunction(wf, exp):
     i = 0
     try:
         while i < sample_size:
+            
             # we start with the primary data provider using blocking returnData
             new_data = wf.primary_data_provider["instance"].returnData()
             if new_data is not None:
@@ -79,7 +80,8 @@ def experimentFunction(wf, exp):
         error("This experiment got stopped as requested by a StopIteration exception")
     try:
         result = wf.evaluator(exp["state"],wf)
-    except:
+    except Exception as e:
+        print(e)
         result = 0
         error("evaluator failed")
     # we store the counter of this experiment in the workflow
@@ -97,6 +99,6 @@ def experimentFunction(wf, exp):
     info("> FullState      | " + str(exp["state"]))
     info("> ResultValue    | " + str(result))
     # log the result values into a csv file
-    log_results(wf.folder, exp["knobs"].values() + [result])
+    #log_results(wf.folder, list(exp["knobs"].values()) + [result])
     # return the result value of the evaluator
     return result

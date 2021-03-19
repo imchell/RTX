@@ -35,7 +35,7 @@ def clearOldLog():
 def logToFile(any):
     """ appends the message to the execution.log file """
     if LOG_FOLDER is not None:
-        f = open(LOG_FOLDER + '/execution.log', 'ab')
+        f = open(LOG_FOLDER + '/execution.log', 'w+')
         f.write(str(any) + "\n")
 
 
@@ -68,9 +68,9 @@ def process(preText, i, total):
     sys.stdout.flush()
     size_str = Fore.YELLOW + "> " + preText + "["
     percentage = 30 * i / total
-    for j in range(0, percentage):
+    for j in range(0, int(percentage)):
         size_str += "#"
-    for k in range(percentage, 30):
+    for k in range(int(percentage), 30):
         size_str += "."
     size_str += "] Target: " + str(total) + " | Done: " + str(i) + Fore.RESET
     sys.stdout.write('%s\r' % size_str)
@@ -96,11 +96,11 @@ def log_results(experiment_folder, data, append=True):
     """ logs the result values of an experiment to a csv file """
     try:
         if append:
-            with open('./' + str(experiment_folder) + '/results.csv', 'ab') as csv_file:
+            with open('./' + str(experiment_folder) + '/results.csv', 'w+') as csv_file:
                 writer = csv.writer(csv_file, dialect='excel')
                 writer.writerow(data)
         else:
-            with open('./' + str(experiment_folder) + '/results.csv', 'wb') as csv_file:
+            with open('./' + str(experiment_folder) + '/results.csv', 'w+') as csv_file:
                 writer = csv.writer(csv_file, dialect='excel')
                 writer.writerow(data)
 

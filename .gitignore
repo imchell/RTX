@@ -14,4 +14,3 @@ dist/
 examples/**/*.png
 examples/**/execution.log
 examples/**/results.csv
-RTX.egg-info/

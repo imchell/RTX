@@ -16,10 +16,12 @@ def loadDefinition(folder):
         exit(1)
     try:
         wf = imp.load_source('wf', './' + folder + '/definition.py')
+        print("maybe")
         wf.folder = sys.argv[2]
         testName = wf.name
         return wf
-    except IOError:
+    except IOError as e:
+        print(e.errno)
         error("Folder is not a valid experiment folder (does not contain definition.py)")
         exit(1)
     except AttributeError:
