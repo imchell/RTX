@@ -17,7 +17,7 @@ def start_simple_am(wf):
 
         server_state = effector(wf, '')
         response_time = 0
-        is_server_boot = False
+        
         print(server_state)
         dimmer = float(server_state['dimmer'])
         response_time = float(server_state['average_rt'])
@@ -25,6 +25,7 @@ def start_simple_am(wf):
         servers = float(server_state["servers"])
         max_servers = float(server_state["max_servers"])
         total_util = server_state["total_util"]
+        is_server_boot = (servers > activeServers)
         #["dimmer", "servers", "active_servers", "basic_rt", "optional_rt", "basic_throughput", "opt_throughput"]
 
         if(response_time > RT_THRESHOLD):
