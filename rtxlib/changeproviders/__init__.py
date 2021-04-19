@@ -4,7 +4,7 @@ from rtxlib.changeproviders.DummyChangeProvider import DummyChangeChangeProvider
 from rtxlib.changeproviders.HTTPRequestChangeProvider import HTTPRequestChangeProvider
 from rtxlib.changeproviders.KafkaProducerChangeProvider import KafkaProducerChangeProvider
 from rtxlib.changeproviders.MQTTPublisherChangeProvider import MQTTPublisherChangeProvider
-from rtxlib.changeproviders.EWSChangeProvider import EWSChangeProvider
+#from rtxlib.changeproviders.EWSChangeProvider import EWSChangeProvider
 from rtxlib.changeproviders.SWIMChangeProvider import SWIMChangeProvider
 def init_change_provider(wf):
     """ loads the specified change provider into the workflow """
@@ -17,8 +17,8 @@ def init_change_provider(wf):
         cp["instance"] = HTTPRequestChangeProvider(wf, cp)
     elif cp["type"] == "dummy":
         cp["instance"] = DummyChangeChangeProvider(wf, cp)
-    elif cp["type"] == "ews_change":
-        cp["instance"] = EWSChangeProvider(wf,cp)
+    # elif cp["type"] == "ews_change":
+    #     cp["instance"] = EWSChangeProvider(wf,cp)
     elif cp["type"] == "swim_change":
         cp["instance"] = SWIMChangeProvider(wf,cp)
     elif cp["type"] == "local_hook":

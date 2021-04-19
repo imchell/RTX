@@ -8,6 +8,7 @@ class SWIMChangeProvider(ChangeProvider):
         # load config
         self.host = wf.host
         self.port = wf.port
+        self.send_message = wf.send_message
         try:
             info("> SWIMChangePro  | ", Fore.CYAN)
         except KeyError:
@@ -17,8 +18,16 @@ class SWIMChangeProvider(ChangeProvider):
 
     def applyChange(self, message):
         """ does a HTTP POST to the URL with the serialized message """
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if(message == "initial" or message == "data"):
+            return
 
-        s.connect((self.host, self.port))
+        # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        s.sendall(message.encode('UTF-8'))
+        # s.connect((self.host, self.port))
+        resp = self.send_message(message)
+        print("applied change, response: " + resp)
+
+
+        # s.sendall(message.encode('UTF-8'))
+
+        # s.close()

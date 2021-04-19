@@ -3,9 +3,6 @@ import requests
 from skopt import gp_minimize
 from rtxlib import info, error
 from rtxlib.execution import experimentFunction
-from python_ews.server_interface import ewsRESTInterface as eRI
-from python_ews.modelling import ConfigurationModel
-
 
 def start_discrete_optimizer_strategy(wf):
     """ executes a discrete value optimizing strategy """

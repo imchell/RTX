@@ -4,7 +4,7 @@ from rtxlib.dataproviders.HTTPRequestDataProvider import HTTPRequestDataProvider
 from rtxlib.dataproviders.IntervalDataProvider import IntervalDataProvider
 from rtxlib.dataproviders.KafkaConsumerDataProvider import KafkaConsumerDataProvider
 from rtxlib.dataproviders.MQTTListenerDataProvider import MQTTListenerDataProvider
-from rtxlib.dataproviders.EWSDataProvider import EWSDataProvider
+# from rtxlib.dataproviders.EWSDataProvider import EWSDataProvider
 from rtxlib.dataproviders.SWIMDataProvider import SWIMDataProvider
 
 
@@ -26,8 +26,8 @@ def createInstance(wf, cp):
         cp["instance"] = HTTPRequestDataProvider(wf, cp)
     elif cp["type"] == "interval":
         cp["instance"] = IntervalDataProvider(wf, cp)
-    elif cp["type"] == "ews_data":
-        cp["instance"] = EWSDataProvider(wf,cp)
+    # elif cp["type"] == "ews_data":
+    #     cp["instance"] = EWSDataProvider(wf,cp)
     elif cp["type"] == "swim_data":
         cp["instance"] = SWIMDataProvider(wf,cp)
     elif cp["type"] == "local_hook":
