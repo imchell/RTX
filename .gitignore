@@ -10,6 +10,8 @@ checkpoint/*
 DBA.egg-info/
 build/
 dist/
+RTX.egg-info/
+venv/
 */*.png
 examples/**/*.png
 examples/**/execution.log
