@@ -50,7 +50,7 @@ def routing_data_reducer(state, newData, wf):
 
 primary_data_provider = {
     "type": "kafka_consumer",
-    "kafka_uri": "kafka:9092",
+    "kafka_uri": "localhost:9092",
     "topic": "crowd-nav-trips",
     "serializer": "JSON",
     "data_reducer": primary_data_reducer
@@ -59,14 +59,14 @@ primary_data_provider = {
 secondary_data_providers = [
     {
         "type": "kafka_consumer",
-        "kafka_uri": "kafka:9092",
+        "kafka_uri": "localhost:9092",
         "topic": "crowd-nav-performance",
         "serializer": "JSON",
         "data_reducer": performance_data_reducer
     },
     {
         "type": "kafka_consumer",
-        "kafka_uri": "kafka:9092",
+        "kafka_uri": "localhost:9092",
         "topic": "crowd-nav-routing",
         "serializer": "JSON",
         "data_reducer": routing_data_reducer
@@ -75,7 +75,7 @@ secondary_data_providers = [
 
 change_provider = {
     "type": "kafka_producer",
-    "kafka_uri": "kafka:9092",
+    "kafka_uri": "localhost:9092",
     "topic": "crowd-nav-commands",
     "serializer": "JSON",
 }
