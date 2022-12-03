@@ -2,6 +2,7 @@ from rtxlib.executionstrategy.ForeverStrategy import start_forever_strategy
 from rtxlib.executionstrategy.StepStrategy import start_step_strategy
 from rtxlib.executionstrategy.SelfOptimizerStrategy import start_self_optimizer_strategy
 from rtxlib.executionstrategy.SequencialStrategy import start_sequential_strategy
+from rtxlib.executionstrategy.EvolutionaryStrategy import start_evolutionary_strategy
 # from rtxlib.executionstrategy.SeqRuntimeStrategy import start_seq_runtime_stategy
 # from rtxlib.executionstrategy.DiscreteOptimizer import start_discrete_optimizer_strategy
 # from rtxlib.executionstrategy.UCB1 import start_mab_ucb1_strategy
@@ -38,33 +39,37 @@ def run_execution_strategy(wf):
         elif wf.execution_strategy["type"] == "step_explorer":
             log_results(wf.folder, list(wf.execution_strategy["knobs"].keys()) + ["result"], append=False)
             start_step_strategy(wf)
-    
+
         elif wf.execution_strategy["type"] == "forever":
             start_forever_strategy(wf)
 
         elif wf.execution_strategy["type"] == "simple_am":
             start_simple_am(wf)
 
+        elif wf.execution_strategy["type"] == "evolutionary":
+            log_results(wf.folder, list(wf.execution_strategy["knobs"].keys()) + ["result"], append=False)
+            start_evolutionary_strategy(wf)
+
         # elif wf.execution_strategy["type"] == "sequential_runtime":
         #     print("got here")
         #     log_results(wf.folder, wf.execution_strategy["knobs"] + ["result"], append=False)
         #     start_seq_runtime_stategy(wf)
-            
+
         # elif wf.execution_strategy["type"] == "mabandit_ucb1":
         #     print(type(wf.execution_strategy["knobs"]))
         #     log_results(wf.folder, wf.execution_strategy["knobs"] + ["result"], append=False)
         #     start_mab_ucb1_strategy(wf)
 
         # elif wf.execution_strategy["type"] == "discount_ucb":
-            
+
         #     log_results(wf.folder, wf.execution_strategy["knobs"] + ["result"], append=False)
         #     start_mab_discount_ucb_strategy(wf)
 
         # elif wf.execution_strategy["type"] == "sliding_ucb":
-            
+
         #     log_results(wf.folder, wf.execution_strategy["knobs"] + ["result"], append=False)
         #     start_mab_sw_ucb_strategy(wf)
-            
+
     except RuntimeError:
         error("Stopped the whole workflow as requested by a RuntimeError")
     # finished

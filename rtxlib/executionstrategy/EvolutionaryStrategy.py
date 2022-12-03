@@ -105,7 +105,7 @@ def ga(variables, range_tuples, wf):
         offspring = map(toolbox.clone, offspring)
 
         # Apply crossover and mutation on the offspring
-        for child1, child2 in zip(offspring[::2], offspring[1::2]):
+        for child1, child2 in zip(list(offspring)[::2], list(offspring)[1::2]):
             if random.random() < crossover_probability:
                 toolbox.mate(child1, child2)
                 del child1.fitness.values
