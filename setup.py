@@ -16,6 +16,10 @@ setup(
         'pandas',  # plotting lib
         'seaborn',  # plotting lib
         'paho-mqtt',  # mqtt integration
-        'requests'  # http integreation
+        'requests',  # http integreation
+        'elasticsearch', # elasticsearch integration
+        'numpy', # scientific computing
+        'scipy', # numerics and statistics
+        'statsmodels' # statistics and statistical testing
     ]
 )
