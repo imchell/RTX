@@ -14,13 +14,20 @@ from rtxlib import info, error
 from rtxlib.execution import experimentFunction
 
 import random
-from deap import tools
 from deap import base, creator
 
-crowdnav_instance_number = 0
+from ga import ga
+from nsga2 import nsga2
+from novelty_search import novelty_search
+from random_search import random_search
+
+from rtxlib.changeproviders import init_change_provider
+from rtxlib.dataproviders import init_data_providers
+
 
 def start_evolutionary_strategy(wf):
     global original_primary_data_provider_topic
+    global original_secondary_data_provider_topic
     global original_change_provider_topic
 
     info("> ExecStrategy   | Evolutionary", Fore.CYAN)
@@ -28,9 +35,9 @@ def start_evolutionary_strategy(wf):
     wf.totalExperiments = wf.execution_strategy["optimizer_iterations"]
     info("> Optimizer      | " + optimizer_method, Fore.CYAN)
 
-    original_primary_data_provider_topic = wf.primary_data_provider["instance"].topic
-    original_change_provider_topic = wf.change_provider["instance"].topic
-
+    original_primary_data_provider_topic = wf.primary_data_provider["topic"]
+    original_secondary_data_provider_topic = wf.secondary_data_providers[0]["topic"]
+    original_change_provider_topic = wf.change_provider["topic"]
 
     # we look at the ranges the user has specified in the knobs
     knobs = wf.execution_strategy["knobs"]
@@ -44,149 +51,115 @@ def start_evolutionary_strategy(wf):
 
     info("> Run Optimizer | " + optimizer_method, Fore.CYAN)
     if optimizer_method == "GA":
-        ga(variables, range_tuples, wf)
+        ga(variables, range_tuples, random_knob_config, mutate, evaluate, wf)
     elif optimizer_method == "NSGAII":
-        nsga2(variables, range_tuples, wf)
+        nsga2(variables, range_tuples, random_knob_config, mutate, evaluate, wf)
+    elif optimizer_method == "NoveltySearch":
+        novelty_search(variables, range_tuples, random_knob_config, mutate, evaluate, wf)
+    elif optimizer_method == "RandomSearch":
+        random_search(variables, range_tuples, random_knob_config, mutate, evaluate, wf)
 
 
-def nsga2(variables, range_tuples, wf):
-    optimizer_iterations = wf.execution_strategy["optimizer_iterations"]
-    population_size = wf.execution_strategy["population_size"]
-    crossover_probability = wf.execution_strategy["crossover_probability"]
-    mutation_probability = wf.execution_strategy["mutation_probability"]
-    info("> Parameters:\noptimizer_iterations: " + str(optimizer_iterations) + "\npopulation_size: " + str(
-        population_size) + "\ncrossover_probability: " + str(crossover_probability) + "\nmutation_probability: " + str(
-        mutation_probability))
-    # TODO implement NSGA-II
-
-    # some functionality for NSGA-II is provided by DEAP such as:
-    # selection
-    # tools.selNSGA2(...)
-
-
-def ga(variables, range_tuples, wf):
-    optimizer_iterations = wf.execution_strategy["optimizer_iterations"]
-    population_size = wf.execution_strategy["population_size"]
-    crossover_probability = wf.execution_strategy["crossover_probability"]
-    mutation_probability = wf.execution_strategy["mutation_probability"]
-    info("> Parameters:\noptimizer_iterations: " + str(optimizer_iterations) + "\npopulation_size: " + str(
-        population_size) + "\ncrossover_probability: " + str(crossover_probability) + "\nmutation_probability: " + str(
-        mutation_probability))
-
-    creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
-    creator.create("Individual", list, fitness=creator.FitnessMin)
-
-    toolbox = base.Toolbox()
-    toolbox.register("individual", random_knob_config, variables=variables, range_tubles=range_tuples)
-    toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-
-    pop = toolbox.population(n=population_size)
-
-    info("Individual: " + str(variables))
-    info("Population: " + str(pop))
-
-    toolbox.register("mate", tools.cxOnePoint)
-    toolbox.register("mutate", mutate, variables=variables, range_tubles=range_tuples)
-    toolbox.register("select", tools.selTournament, tournsize=3)
-    toolbox.register("evaluate", evaluate, vars=variables, ranges=range_tuples, wf=wf)
-
-    # Evaluate the entire population
-    fitnesses = map(toolbox.evaluate, pop)
-
-    for ind, fit in zip(pop, fitnesses):
-        info("> " + str(ind) + " -- " + str(fit))
-        ind.fitness.values = fit
-
-    for g in range(optimizer_iterations):
-        info("> \n" + str(g) + ". Generation")
-        # Select the next generation individuals
-        offspring = toolbox.select(pop, len(pop))
-        # Clone the selected individuals
-        offspring = map(toolbox.clone, offspring)
-
-        # Apply crossover and mutation on the offspring
-        for child1, child2 in zip(offspring[::2], offspring[1::2]):
-            if random.random() < crossover_probability:
-                toolbox.mate(child1, child2)
-                del child1.fitness.values
-                del child2.fitness.values
-
-        for mutant in offspring:
-            if random.random() < mutation_probability:
-                toolbox.mutate(mutant)
-                del mutant.fitness.values
-
-        # Evaluate the individuals with an invalid fitness
-        invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-        fitnesses = map(toolbox.evaluate, invalid_ind)
-        for ind, fit in zip(invalid_ind, fitnesses):
-            ind.fitness.values = fit
-
-        # The population is entirely replaced by the offspring
-        pop[:] = offspring
-        info("> Population: " + str(pop))
-        info("> Individual: " + str(variables))
-
-
-def random_knob_config(variables, range_tubles):
+def random_knob_config(variables, range_tuples):
     knob_config = []
-    for x, tuble in zip(variables, range_tubles):
+    for x, range_tuple in zip(variables, range_tuples):
         if x == "route_random_sigma" or x == "exploration_percentage" \
                 or x == "max_speed_and_length_factor" or x == "average_edge_duration_factor":
-            value = random.uniform(tuble[0], tuble[1])
+            value = random.uniform(range_tuple[0], range_tuple[1])
             value = round(value, 2)
             knob_config.append(value)
         elif x == "freshness_update_factor" or x == "freshness_cut_off_value" \
                 or x == "re_route_every_ticks":
-            value = random.randint(tuble[0], tuble[1])
+            value = random.randint(range_tuple[0], range_tuple[1])
             knob_config.append(value)
     return creator.Individual(knob_config)
 
 
-def mutate(individual, variables, range_tubles):
+def mutate(individual, variables, range_tuples):
     i = random.randint(0, len(individual) - 1)
     if variables[i] == "route_random_sigma" or variables[i] == "exploration_percentage" \
             or variables[i] == "max_speed_and_length_factor" or variables[i] == "average_edge_duration_factor":
-        value = random.uniform(range_tubles[i][0], range_tubles[i][1])
+        value = random.uniform(range_tuples[i][0], range_tuples[i][1])
         value = round(value, 2)
         individual[i] = value
     elif variables[i] == "freshness_update_factor" or variables[i] == "freshness_cut_off_value" \
             or variables[i] == "re_route_every_ticks":
-        value = random.randint(range_tubles[i][0], range_tubles[i][1])
+        value = random.randint(range_tuples[i][0], range_tuples[i][1])
         individual[i] = value
+    return individual,
 
 
-def evaluate(individual, vars, ranges, wf):
-    result = evolutionary_execution(wf, individual, vars)
-    info("> RESULT: " + str(result), Fore.RED)
-    return result,
+# reuse earlier fitness results if the same individual should be evaluated again
+# however and currently, identical individuals generated in the same iteration are evaluated concurrently, and
+# more than once.
+#
+# key is the String representation of the individual (sequences cannot be keys), value is the fitness
+_fitnesses = dict()
+
+
+def evaluate(individual_and_id, vars, ranges, wf):
+    individual = individual_and_id[0]
+    # retrieve fitness from dict (earlier evaluation)
+    fitness = _fitnesses.get(str(individual), None)
+
+    # here we save the individual id so that it ends up to the db
+    wf.individual_id = individual_and_id[1]
+    wf.iteration_id = individual_and_id[2]
+
+    if fitness is None:
+        info("> Compute fitness for the individual " + str(individual) + " ...")
+        # fitness of the individual is unknown, so compute it and add it to the dict
+        # we recreate here the instances of the change provider and data provider that we deleted before
+        update_topics(wf, individual_and_id[1])
+        init_change_provider(wf)
+        init_data_providers(wf)
+        fitness = evolutionary_execution(wf, individual, vars)
+        _fitnesses[str(individual)] = fitness
+    else:
+        info("> Reuse fitness " + str(fitness) + " from earlier evaluation for the individual "
+             + str(individual) + " ...")
+        reuse_evaluation(wf, individual, vars, fitness)
+
+    if wf.execution_strategy["is_multi_objective"]:
+        # fitness is a tuple (avg trip overhead, avg performance)
+        info("> FITNESS: " + str(fitness), Fore.RED)
+        return fitness
+    else:
+        # just return the trip overhead
+        info("> FITNESS: " + str(fitness[0]), Fore.RED)
+        return fitness[0],
 
 
 def evolutionary_execution(wf, opti_values, variables):
-    global crowdnav_instance_number
+    # Where do we start multiple threads to call the experimentFunction concurrently,
+    # once for each experiment and crowdnav instance?
+    # This method can be invoked concurrently.
 
     """ this is the function we call and that returns a value for optimization """
     knob_object = recreate_knob_from_optimizer_values(variables, opti_values)
     # create a new experiment to run in execution
     exp = dict()
-
-    # TODO where do we start multiple threads to call the experimentFunction concurrently, once for each experiment and crowdnav instance?
-    # TODO should we create new/fresh CrowdNav instances for each iteration/generation? Otherwise, we use the same instance to evaluate across interations/generations to evaluate individiuals.
-
-    if wf.execution_strategy["parallel_execution_of_individuals"]:
-        wf.primary_data_provider["instance"].topic = original_primary_data_provider_topic + "-" + str(crowdnav_instance_number)
-        wf.change_provider["instance"].topic = original_change_provider_topic + "-" + str(crowdnav_instance_number)
-        info("Listering on " + wf.primary_data_provider["instance"].topic)
-        info("Posting changes to " + wf.change_provider["instance"].topic)
-        crowdnav_instance_number = crowdnav_instance_number + 1
-        if crowdnav_instance_number == wf.execution_strategy["population_size"]:
-            crowdnav_instance_number = 0
-
     exp["ignore_first_n_results"] = wf.execution_strategy["ignore_first_n_results"]
     exp["sample_size"] = wf.execution_strategy["sample_size"]
     exp["knobs"] = knob_object
     # the experiment function returns what the evaluator in definition.py is computing
     return experimentFunction(wf, exp)
+
+
+def update_topics(wf, crowdnav_id):
+    if wf.execution_strategy["parallel_execution_of_individuals"]:
+        suffix = "-" + str(crowdnav_id)
+        wf.processor_id = crowdnav_id
+    else:
+        suffix = "-" + str(wf.seed)
+
+    wf.primary_data_provider["topic"] = original_primary_data_provider_topic + suffix
+    wf.secondary_data_providers[0]["topic"] = original_secondary_data_provider_topic + suffix
+    wf.change_provider["topic"] = original_change_provider_topic + suffix
+
+    info("Listening to " + wf.primary_data_provider["topic"])
+    info("Listening to " + wf.secondary_data_providers[0]["topic"])
+    info("Posting changes to " + wf.change_provider["topic"])
 
 
 def recreate_knob_from_optimizer_values(variables, opti_values):
@@ -197,3 +170,19 @@ def recreate_knob_from_optimizer_values(variables, opti_values):
         knob_object[val] = opti_values[idx]
     info(">> knob object " + str(knob_object))
     return knob_object
+
+
+def reuse_evaluation(wf, opti_values, vars, fitness):
+    wf.experimentCounter += 1
+    # wf.processor_id = individual_id
+    wf.current_knobs = recreate_knob_from_optimizer_values(vars, opti_values)
+    data_to_save = {}
+    data_to_save["avg_overhead"] = fitness[0]
+    data_to_save["avg_routing"] = fitness[1]
+    data_to_save["overheads"] = [-1]
+    data_to_save["routings"] = [-1]
+    # wf.db.save_data_for_experiment(wf.experimentCounter, wf.current_knobs, data_to_save, wf.rtx_run_id, wf.processor_id)
+    wf.db.save_data_for_experiment(wf.iteration_id, wf.current_knobs, data_to_save, wf.rtx_run_id, wf.individual_id)
+    # Here, we need to decide either to return a single value or a tuple
+    # depending of course on what the optimizer can handle
+    return data_to_save["avg_overhead"], data_to_save["avg_routing"]

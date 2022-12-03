@@ -28,7 +28,7 @@ def primary_data_reducer(state, newData, wf):
 
 primary_data_provider = {
     "type": "kafka_consumer",
-    "kafka_uri": "kafka:9092",
+    "kafka_uri": "localhost:9092",
     "topic": "crowd-nav-summary",
     "serializer": "JSON",
     "data_reducer": primary_data_reducer
@@ -36,7 +36,7 @@ primary_data_provider = {
 
 change_provider = {
     "type": "kafka_producer",
-    "kafka_uri": "kafka:9092",
+    "kafka_uri": "localhost:9092",
     "topic": "crowd-nav-commands",
     "serializer": "JSON",
 }

@@ -16,7 +16,7 @@ import java.util.Properties
 object Main extends App {
 
   // the kafka uri
-  val kafkaURI = "kafka:9092"
+  val kafkaURI = "localhost:9092"
   // the zookeeper uri
   val zookeeperURI = "kafka:2181"
   // the queue we get our input from

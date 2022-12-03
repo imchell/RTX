@@ -20,13 +20,15 @@ def experimentFunction(wf, exp):
 
     # start
     info(">")
-    #info("> KnobValues     | " + str(exp["knobs"]))
+    info("> KnobValues     | " + str(exp["knobs"]))
     # create new state
     exp["state"] = wf.state_initializer(dict(),wf)
 
     # apply changes to system
     try:
-        wf.change_provider["instance"].applyChange(change_creator(exp["knobs"],wf))
+        change_creator(exp["knobs"],wf)
+        # we are restarting CrowdNav with a configuration, so this is not needed any more
+        # wf.change_provider["instance"].applyChange(change_creator(exp["knobs"],wf))
     except:
         error("apply changes did not work")
 
@@ -41,24 +43,34 @@ def experimentFunction(wf, exp):
                 process("IgnoreSamples  | ", i, to_ignore)
         print("")
 
+    # we store the counter of this experiment in the workflow
+    if hasattr(wf, "experimentCounter"):
+        wf.experimentCounter += 1
+    else:
+        wf.experimentCounter = 0
+
     # start collecting data
     sample_size = exp["sample_size"]
     i = 0
     try:
         while i < sample_size:
-            
             # we start with the primary data provider using blocking returnData
             new_data = wf.primary_data_provider["instance"].returnData()
             if new_data is not None:
+                wf.current_knobs = exp["knobs"]
+                exp["state"] = wf.primary_data_provider["data_reducer"](exp["state"], new_data, wf)
+
                 try:
+                    pass
                     # print(new_data)
-                    exp["state"] = wf.primary_data_provider["data_reducer"](exp["state"], new_data,wf)
+                    # wf.current_knobs = exp["knobs"]
+                    # exp["state"] = wf.primary_data_provider["data_reducer"](exp["state"], new_data, wf)
                 except StopIteration:
                     raise StopIteration()  # just fwd
                 except RuntimeError:
                     raise RuntimeError()  # just fwd
                 except:
-                    error("could not reducing data set: " + str(new_data))
+                    error("could not reduce data set: " + str(new_data))
                 i += 1
                 process("CollectSamples | ", i, sample_size)
             # now we use returnDataListNonBlocking on all secondary data providers
@@ -80,25 +92,20 @@ def experimentFunction(wf, exp):
         error("This experiment got stopped as requested by a StopIteration exception")
     try:
         result = wf.evaluator(exp["state"],wf)
-    except Exception as e:
-        print(e)
+    except:
         result = 0
         error("evaluator failed")
-    # we store the counter of this experiment in the workflow
-    if hasattr(wf, "experimentCounter"):
-        wf.experimentCounter += 1
-    else:
-        wf.experimentCounter = 1
+
     # print the results
     duration = current_milli_time() - start_time
     # do not show stats for forever strategy
     if wf.totalExperiments > 0:
-        info("> Statistics     | " + str(wf.experimentCounter) + "/" + str(wf.totalExperiments)
+        info("> Statistics     | " + str(wf.experimentCounter+1) + "/" + str(wf.totalExperiments)
              + " took " + str(duration) + "ms" + " - remaining ~" + str(
-            (wf.totalExperiments - wf.experimentCounter) * duration / 1000) + "sec")
-    info("> FullState      | " + str(exp["state"]))
+            (wf.totalExperiments - wf.experimentCounter+1) * duration / 1000) + "sec")
+    # info("> FullState      | " + str(exp["state"]))
     info("> ResultValue    | " + str(result))
     # log the result values into a csv file
-    #log_results(wf.folder, list(exp["knobs"].values()) + [result])
+    log_results(wf.folder, exp["knobs"].values() + [result])
     # return the result value of the evaluator
     return result
