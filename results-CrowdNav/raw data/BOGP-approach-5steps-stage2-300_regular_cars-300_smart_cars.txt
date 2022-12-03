@@ -1,0 +1,64 @@
+*******************
+
+
+> OEDA configuration: Using elasticsearch database.
+Running rtx on target system with name: CrowdNav-0
+1
+######################################
+> Workflow       | AWEDseBPSJ533gDbr1-6
+> KafkaProducer  | JSON | URI: exp1:9092 | Topic: crowd-nav-commands-0
+> KafkaConsumer  | JSON | URI: exp1:9092 | Topic: crowd-nav-trips-0
+> ExecStrategy   | SelfOptimizer
+> Optimizer      | gauss
+>
+> KnobValues     | {'freshness_cut_off_value': 478}
+
+
+> Statistics     | 1/2 took 1191378ms - remaining ~3574sec
+> FullState      | {'data_points': 5000, 'avg_overhead': 1.8141848587402314, 'issued_complaints': 0}
+> ResultValue    | 1.81418485874
+>
+> KnobValues     | {'freshness_cut_off_value': 700}
+
+
+> Statistics     | 2/2 took 1103475ms - remaining ~2206sec
+> FullState      | {'data_points': 5000, 'avg_overhead': 1.7968787922745082, 'issued_complaints': 0}
+> ResultValue    | 1.79687879227
+>
+> OptimalResult  | Knobs:  {'freshness_cut_off_value': 700}
+>                | Result: 1.79687879227
+>
+> Finished workflow
+simulation finished
+2296.27566409
+
+****************************************
+****************************************
+route_random_sigma": 0.0
+exploration_percentage": 0.0
+average_edge_duration_factor": 1.0
+freshness_update_factor": 5
+max_speed_and_length_factor": 1.2218451599199196
+re_route_every_ticks": 10
+
+###################################
+FINAL RESULT:
+###################################
+route_random_sigma": 0.0
+exploration_percentage": 0.0
+average_edge_duration_factor": 1.0
+freshness_update_factor": 5
+max_speed_and_length_factor": 1.2218451599199196
+re_route_every_ticks": 10
+freshness_cut_off_value: 700
+
+###################################
+FINAL RESULT OF BASELINE:
+###################################
+route_random_sigma: 0.11615606716272785
+freshness_cut_off_value: 359
+max_speed_and_length_factor: 2.3643285696975598
+re_route_every_ticks: 63
+freshness_update_factor: 15
+average_edge_duration_factor: 1.2081011415096372
+exploration_percentage: 0.19508109229406423

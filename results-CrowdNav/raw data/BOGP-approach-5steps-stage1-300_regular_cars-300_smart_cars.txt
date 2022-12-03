@@ -1,0 +1,49 @@
+> OEDA configuration: Using elasticsearch database.
+Running rtx on target system with name: CrowdNav-0
+1
+######################################
+> Workflow       | AWEACkN2SJ533gDbr1-t
+> KafkaProducer  | JSON | URI: exp1:9092 | Topic: crowd-nav-commands-0
+> KafkaConsumer  | JSON | URI: exp1:9092 | Topic: crowd-nav-trips-0
+> ExecStrategy   | SelfOptimizer
+> Optimizer      | gauss
+>
+> KnobValues     | {'max_speed_and_length_factor': 1.2218451599199196}
+
+> Error: Error while saving data point data in elasticsearch. Check connection to elasticsearch.
+
+> Statistics     | 1/3 took 1150608ms - remaining ~4602sec
+> FullState      | {'data_points': 5000, 'avg_overhead': 1.7941747631251665, 'issued_complaints': 0}
+> ResultValue    | 1.79417476313
+>
+> KnobValues     | {'max_speed_and_length_factor': 2.5}
+
+
+> Statistics     | 2/3 took 1155665ms - remaining ~3466sec
+> FullState      | {'data_points': 5000, 'avg_overhead': 1.8445119417292688, 'issued_complaints': 0}
+> ResultValue    | 1.84451194173
+>
+> KnobValues     | {'max_speed_and_length_factor': 1.0}
+
+> Error: Error while saving data point data in elasticsearch. Check connection to elasticsearch.
+> Error: Error while saving data point data in elasticsearch. Check connection to elasticsearch.
+
+> Statistics     | 3/3 took 1143805ms - remaining ~2287sec
+> FullState      | {'data_points': 5000, 'avg_overhead': 1.814173232203285, 'issued_complaints': 0}
+> ResultValue    | 1.8141732322
+>
+> OptimalResult  | Knobs:  {'max_speed_and_length_factor': 1.2218451599199196}
+>                | Result: 1.79417476313
+>
+> Finished workflow
+simulation finished
+3452.4947741
+
+****************************************
+****************************************
+route_random_sigma": 0.0
+exploration_percentage": 0.0
+average_edge_duration_factor": 1.0
+freshness_update_factor": 5
+freshness_cut_off_value": 700
+re_route_every_ticks": 10

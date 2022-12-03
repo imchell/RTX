@@ -1,0 +1,73 @@
+> OEDA configuration: Using elasticsearch database.
+Running rtx on target system with name: CrowdNav-0
+7
+######################################
+> Workflow       | AWD6CEOLSJ533gDbr19_
+> KafkaProducer  | JSON | URI: exp1:9092 | Topic: crowd-nav-commands-0
+> KafkaConsumer  | JSON | URI: exp1:9092 | Topic: crowd-nav-trips-0
+> ExecStrategy   | SelfOptimizer
+> Optimizer      | gauss
+>
+> KnobValues     | {'re_route_every_ticks': 63, 'freshness_cut_off_value': 359, 'max_speed_and_length_factor': 2.3643285696975598, 'exploration_percentage': 0.19508109229406423, 'freshness_update_factor': 15, 'route_random_sigma': 0.11615606716272785, 'average_edge_duration_factor': 1.2081011415096372}
+
+
+> Statistics     | 1/5 took 525261ms - remaining ~3151sec
+> FullState      | {'data_points': 5000, 'avg_overhead': 1.8385592176489332, 'issued_complaints': 0}
+> ResultValue    | 1.83855921765
+>
+> KnobValues     | {'re_route_every_ticks': 70, 'freshness_cut_off_value': 100, 'max_speed_and_length_factor': 1.0, 'exploration_percentage': 0.0, 'freshness_update_factor': 20, 'route_random_sigma': 0.29999999999999999, 'average_edge_duration_factor': 2.5}
+
+
+> Statistics     | 2/5 took 594542ms - remaining ~2972sec
+> FullState      | {'data_points': 5000, 'avg_overhead': 2.1320990516920046, 'issued_complaints': 0}
+> ResultValue    | 2.13209905169
+>
+> KnobValues     | {'re_route_every_ticks': 10, 'freshness_cut_off_value': 100, 'max_speed_and_length_factor': 1.4945493929158853, 'exploration_percentage': 0.050102688626504112, 'freshness_update_factor': 5, 'route_random_sigma': 0.11183409046143469, 'average_edge_duration_factor': 1.2009325180672086}
+
+
+> Statistics     | 3/5 took 1190567ms - remaining ~4762sec
+> FullState      | {'data_points': 5000, 'avg_overhead': 1.8661121418152593, 'issued_complaints': 0}
+> ResultValue    | 1.86611214182
+>
+> KnobValues     | {'re_route_every_ticks': 70, 'freshness_cut_off_value': 100, 'max_speed_and_length_factor': 1.4899304724142679, 'exploration_percentage': 0.046671921875090533, 'freshness_update_factor': 5, 'route_random_sigma': 0.1457615546536177, 'average_edge_duration_factor': 2.3289187877357223}
+
+
+> Statistics     | 4/5 took 535051ms - remaining ~1605sec
+> FullState      | {'data_points': 5000, 'avg_overhead': 1.9043303904391287, 'issued_complaints': 0}
+> ResultValue    | 1.90433039044
+>
+> KnobValues     | {'re_route_every_ticks': 70, 'freshness_cut_off_value': 100, 'max_speed_and_length_factor': 2.5, 'exploration_percentage': 0.29999999999999999, 'freshness_update_factor': 5, 'route_random_sigma': 0.0, 'average_edge_duration_factor': 2.5}
+
+
+> Statistics     | 5/5 took 521958ms - remaining ~1043sec
+> FullState      | {'data_points': 5000, 'avg_overhead': 1.8815013325965564, 'issued_complaints': 0}
+> ResultValue    | 1.8815013326
+>
+> OptimalResult  | Knobs:  {'re_route_every_ticks': 63, 'freshness_cut_off_value': 359, 'max_speed_and_length_factor': 2.3643285696975598, 'exploration_percentage': 0.19508109229406423, 'freshness_update_factor': 15, 'route_random_sigma': 0.11615606716272785, 'average_edge_duration_factor': 1.2081011415096372}
+>                | Result: 1.83855921765
+>
+> Finished workflow
+simulation finished
+3371.18501902
+
+###################################
+FINAL RESULT:
+###################################
+route_random_sigma: 0.11615606716272785
+freshness_cut_off_value: 359
+max_speed_and_length_factor: 2.3643285696975598
+re_route_every_ticks: 63
+freshness_update_factor: 15
+average_edge_duration_factor: 1.2081011415096372
+exploration_percentage: 0.19508109229406423
+
+###################################
+FINAL RESULT for 20 iter:
+###################################
+route_random_sigma: 0.25854122587290018
+freshness_cut_off_value: 632
+max_speed_and_length_factor: 1.0
+re_route_every_ticks: 10
+freshness_update_factor: 6
+average_edge_duration_factor: 1.2092674957409459
+exploration_percentage: 0.15700023908873034
