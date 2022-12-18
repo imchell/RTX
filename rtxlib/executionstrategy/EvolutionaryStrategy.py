@@ -19,6 +19,9 @@ from deap import base, creator
 
 crowdnav_instance_number = 0
 
+result_values = []
+opti_values = []
+
 def start_evolutionary_strategy(wf):
     global original_primary_data_provider_topic
     global original_change_provider_topic
@@ -88,6 +91,7 @@ def ga(variables, range_tuples, wf):
     toolbox.register("mate", tools.cxOnePoint)
     toolbox.register("mutate", mutate, variables=variables, range_tubles=range_tuples)
     toolbox.register("select", tools.selTournament, tournsize=3)
+    # This is where the optimization happens
     toolbox.register("evaluate", evaluate, vars=variables, ranges=range_tuples, wf=wf)
 
     # Evaluate the entire population
@@ -95,6 +99,8 @@ def ga(variables, range_tuples, wf):
 
     for ind, fit in zip(pop, fitnesses):
         info("> " + str(ind) + " -- " + str(fit))
+        opti_values.append(ind[0])
+        result_values.append(fit[0])
         ind.fitness.values = fit
 
     for g in range(optimizer_iterations):

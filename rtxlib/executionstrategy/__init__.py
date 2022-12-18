@@ -9,6 +9,7 @@ from rtxlib.executionstrategy.EvolutionaryStrategy import start_evolutionary_str
 # from rtxlib.executionstrategy.DiscountUCB import start_mab_discount_ucb_strategy
 # from rtxlib.executionstrategy.SWUCB import start_mab_sw_ucb_strategy
 from rtxlib.executionstrategy.SimpleAdaptationManager import start_simple_am
+from rtxlib.executionstrategy.OnlineLearningStrategy import wrap_with_online_learning
 from rtxlib import log_results, error, info
 
 from rtxlib.executionstrategy.UncorrelatedSelfOptimizerStrategy import start_uncorrelated_self_optimizer_strategy
@@ -48,7 +49,9 @@ def run_execution_strategy(wf):
 
         elif wf.execution_strategy["type"] == "evolutionary":
             log_results(wf.folder, list(wf.execution_strategy["knobs"].keys()) + ["result"], append=False)
-            start_evolutionary_strategy(wf)
+            # start_evolutionary_strategy(wf)
+            wrap_with_online_learning(wf)
+
 
         # elif wf.execution_strategy["type"] == "sequential_runtime":
         #     print("got here")
