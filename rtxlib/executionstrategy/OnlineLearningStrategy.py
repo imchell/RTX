@@ -8,6 +8,13 @@ from rtxlib import info
 
 
 def wrap_with_online_learning(wf, strategy=start_evolutionary_strategy, rounds=3):
+    """
+    A wrapper for other strategies. Works like inserting an online learning algorithm into the underlying strategy.
+    @param wf: Config defined in definition.py.
+    @param strategy: The underlying strategy function (start_evolutionary_strategy, e.g.).
+    @param rounds: The count of rounds of repeating the strategy.
+    @return: None
+    """
     model = init_model_pipeline()
     for i in range(rounds):
         info("> Round      | " + str(i))
@@ -22,18 +29,38 @@ def wrap_with_online_learning(wf, strategy=start_evolutionary_strategy, rounds=3
 
 
 def feed_new_values(model, opti, result):
+    """
+    Add newly generated results and knob input params into the online learning model.
+    @param model: The online learning model.
+    @param opti: A series of newly tested optimal input params.
+    @param result: A series of newly tested output params.
+    @return None
+    """
     for i in range(len(result) - 1):
         model.learn_one({'result_value_prev': result[i], 'opti_value': opti[i]}, opti[i + 1])
 
 
 def init_model_pipeline():
+    """
+    Initialize an online learning model pipeline.
+    @return: Online learning model.
+    """
     model = compose.Pipeline(
         ('lin_reg', linear_model.LinearRegression())
     )
     return model
 
 
-def online_model_execution(wf, model, current_opti, current_result, iteration):
+def online_model_execution(wf, model, current_opti, current_result, iteration=10):
+    """
+
+    @param wf:
+    @param model:
+    @param current_opti:
+    @param current_result:
+    @param iteration:
+    @return:
+    """
     info("# Handled by Online Learning", Fore.CYAN)
     next_opti = model.predict_one({'result_value_prev': current_result,
                                    'opti_value': current_opti})
