@@ -2,6 +2,7 @@ from colorama import Fore
 
 from rtxlib.executionstrategy.EvolutionaryStrategy import start_evolutionary_strategy, result_values, opti_values, \
     evolutionary_execution
+from rtxlib.execution import experimentFunction
 from river import compose, linear_model, preprocessing, metrics, utils
 from rtxlib import info
 
@@ -16,7 +17,7 @@ def wrap_with_online_learning(wf, strategy=start_evolutionary_strategy, rounds=3
         info("# Online Learning Model Updating", Fore.CYAN)
         feed_new_values(model, opti_values, result_values)
         info("# Online Learning Updated", Fore.CYAN)
-
+        online_model_execution(wf, model, opti_values[-1], result_values[-1], 3)
         info("# End of Round ", Fore.CYAN)
 
 
@@ -32,5 +33,23 @@ def init_model_pipeline():
     return model
 
 
-def online_model_execution():
-    pass
+def online_model_execution(wf, model, current_opti, current_result, iteration):
+    info("# Handled by Online Learning", Fore.CYAN)
+    next_opti = model.predict_one({'result_value_prev': current_result,
+                                   'opti_value': current_opti})
+    new_knobs = {'route_random_sigma': next_opti}
+    for i in range(iteration):
+        result = experimentFunction(wf, {
+            "knobs": new_knobs,
+            "ignore_first_n_results": wf.execution_strategy["ignore_first_n_results"],
+            "sample_size": wf.execution_strategy["sample_size"],
+        })
+        next_opti = model.predict_one({'result_value_prev': result,
+                                       'opti_value': next_opti})
+        new_knobs = {'route_random_sigma': next_opti}
+
+    experimentFunction(wf, {
+        "knobs": new_knobs,
+        "ignore_first_n_results": wf.execution_strategy["ignore_first_n_results"],
+        "sample_size": wf.execution_strategy["sample_size"],
+    })
