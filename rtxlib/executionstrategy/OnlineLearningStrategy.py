@@ -53,13 +53,13 @@ def init_model_pipeline():
 
 def online_model_execution(wf, model, current_opti, current_result, iteration=10):
     """
-
-    @param wf:
-    @param model:
-    @param current_opti:
-    @param current_result:
-    @param iteration:
-    @return:
+    Execute online learning model to get the predicted optimal input param from it.
+    @param wf: Config defined in definition.py.
+    @param model: The online learning model.
+    @param current_opti: The latest optimal input params.
+    @param current_result: The latest optimal output params.
+    @param iteration: The count of rounds of repeating the execution of online learning model.
+    @return: None
     """
     info("# Handled by Online Learning", Fore.CYAN)
     next_opti = model.predict_one({'result_value_prev': current_result,
