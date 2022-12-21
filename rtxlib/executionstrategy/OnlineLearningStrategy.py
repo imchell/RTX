@@ -59,6 +59,7 @@ def online_model_execution(wf, model, current_opti, current_result, iteration=10
     @param current_opti: The latest optimal input params.
     @param current_result: The latest optimal output params.
     @param iteration: The count of rounds of repeating the execution of online learning model.
+    Note that the actual result count is iteration - 1
     @return: None
     """
     info("# Handled by Online Learning", Fore.CYAN)
