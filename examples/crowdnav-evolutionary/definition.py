@@ -19,7 +19,8 @@ execution_strategy = {
         # "freshness_update_factor": (5, 20),
         # "freshness_cut_off_value": (100, 700),
         # "re_route_every_ticks": (10, 70)
-    }
+    },
+    "online_learning": True
 }
 
 
