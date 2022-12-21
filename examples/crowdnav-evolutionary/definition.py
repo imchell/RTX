@@ -50,7 +50,7 @@ change_provider = {
 
 # defines what the experimentFunction returns
 def evaluator(resultState, wf):
-    # avg oveahead computed by primary_data_reducer
+    # avg overhead computed by primary_data_reducer
     return resultState["avg_overhead"]
 
 

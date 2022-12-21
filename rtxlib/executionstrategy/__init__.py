@@ -23,7 +23,8 @@ def run_execution_strategy(wf):
         # start the right execution strategy
         if wf.execution_strategy["type"] == "sequential":
             log_results(wf.folder, list(wf.execution_strategy["knobs"][0].keys()) + ["result"], append=False)
-            start_sequential_strategy(wf)
+            # start_sequential_strategy(wf)
+            wrap_with_online_learning(wf=wf, strategy=start_sequential_strategy)  # wrapped with online learning
 
         elif wf.execution_strategy["type"] == "self_optimizer":
             log_results(wf.folder, list(wf.execution_strategy["knobs"].keys()) + ["result"], append=False)
@@ -50,7 +51,7 @@ def run_execution_strategy(wf):
         elif wf.execution_strategy["type"] == "evolutionary":
             log_results(wf.folder, list(wf.execution_strategy["knobs"].keys()) + ["result"], append=False)
             # start_evolutionary_strategy(wf)
-            wrap_with_online_learning(wf)
+            wrap_with_online_learning(wf=wf, strategy=start_evolutionary_strategy)  # wrapped with online learning
 
 
         # elif wf.execution_strategy["type"] == "sequential_runtime":

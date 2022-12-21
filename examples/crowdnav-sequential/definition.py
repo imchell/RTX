@@ -8,9 +8,11 @@ execution_strategy = {
     "knobs": [
         {"route_random_sigma": 0.0},
         {"route_random_sigma": 0.2},
+        {"route_random_sigma": 0.4},
         {"route_random_sigma": 0.6},
-        {"route_random_sigma": 0.9}
-    ]
+        {"route_random_sigma": 0.8}
+    ],
+    "online_learning": True
 }
 
 

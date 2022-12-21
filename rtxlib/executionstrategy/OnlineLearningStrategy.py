@@ -27,7 +27,7 @@ def wrap_with_online_learning(wf, pretrain_rounds=3, strategy=start_evolutionary
     online_learning_enabled = wf.execution_strategy["online_learning"]
     if online_learning_enabled:
         info("Online Learning Enabled")
-        model = init_model_pipeline(naive_SGTR) # select a machine learning model
+        model = init_model_pipeline(naive_SGTR)  # select a machine learning model
         info("# Pretrain ML Model", Fore.CYAN)
         for i in range(pretrain_rounds):
             strategy(wf)
