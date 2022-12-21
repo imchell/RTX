@@ -8,14 +8,16 @@
 # where the number refers to the an instance of CrowdNav.
 #
 
-from colorama import Fore
-
-from rtxlib import info, error
-from rtxlib.execution import experimentFunction
-
 import random
-from deap import tools
+import time
+
+from colorama import Fore
 from deap import base, creator
+from deap import tools
+
+from rtxlib import info
+from rtxlib.evaluation.OptimizationResult import add_time
+from rtxlib.execution import experimentFunction
 
 crowdnav_instance_number = 0
 
@@ -76,6 +78,8 @@ def ga(variables, range_tuples, wf):
         population_size) + "\ncrossover_probability: " + str(crossover_probability) + "\nmutation_probability: " + str(
         mutation_probability))
 
+    start_time = time.time()
+
     creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
     creator.create("Individual", list, fitness=creator.FitnessMin)
 
@@ -96,6 +100,8 @@ def ga(variables, range_tuples, wf):
 
     # Evaluate the entire population
     fitnesses = map(toolbox.evaluate, pop)
+
+    add_time(time.time() - start_time)
 
     for ind, fit in zip(pop, fitnesses):
         info("> " + str(ind) + " -- " + str(fit))

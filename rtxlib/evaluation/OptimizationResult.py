@@ -1,6 +1,6 @@
-from rtxlib import info, error
 import pandas as pd
-import time
+
+algorithm_running_time = 0
 
 
 def export_result_features(results_df: pd.DataFrame, output_param: str, pretrain_rounds=3):
@@ -16,5 +16,17 @@ def export_result_features(results_df: pd.DataFrame, output_param: str, pretrain
     """
     mean = results_df[output_param].iloc[pretrain_rounds * 5:].mean()
     variance = results_df[output_param].iloc[pretrain_rounds * 5:].var()
-    return {"mean": mean, "variance": variance}
+    return {"mean": mean, "variance": variance, "time": algorithm_running_time}
 
+
+def add_time(time_span):
+    """
+    Add up the algorithm running time
+    Args:
+        time_span: Time span
+
+    Returns: None
+
+    """
+    global algorithm_running_time
+    algorithm_running_time += time_span

@@ -1,10 +1,12 @@
-from colorama import Fore
+import time
 
-from rtxlib.executionstrategy.EvolutionaryStrategy import start_evolutionary_strategy, result_values, opti_values, \
-    evolutionary_execution
-from rtxlib.execution import experimentFunction
-from river import compose, linear_model, preprocessing, metrics, utils
+from colorama import Fore
+from river import compose, linear_model
+
 from rtxlib import info, warn
+from rtxlib.evaluation.OptimizationResult import add_time
+from rtxlib.execution import experimentFunction
+from rtxlib.executionstrategy.EvolutionaryStrategy import start_evolutionary_strategy, result_values, opti_values
 
 
 def wrap_with_online_learning(wf, pretrain_rounds=3, strategy=start_evolutionary_strategy, rounds=3,
@@ -104,9 +106,11 @@ def online_model_execution(wf, model, current_opti, current_result, iteration=10
             "ignore_first_n_results": wf.execution_strategy["ignore_first_n_results"],
             "sample_size": wf.execution_strategy["sample_size"],
         })
+        start_time = time.time()
         next_opti = model.predict_one({'result_value_prev': result,
                                        'opti_value': next_opti})
         new_knobs = {'route_random_sigma': next_opti}
+        add_time(time.time() - start_time)
 
     experimentFunction(wf, {
         "knobs": new_knobs,

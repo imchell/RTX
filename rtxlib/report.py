@@ -56,6 +56,14 @@ def plot(wf):
 
 
 def export_feat(wf):
+    """
+    Export mean and variance of result to feat.json
+    Args:
+        wf: Config defined in definition.py.
+
+    Returns: feat.json
+
+    """
     feat_file_dir = './' + str(wf.folder)
     # try to access the results.csv values
     try:
