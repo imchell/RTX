@@ -1,7 +1,7 @@
 import time
 
 from colorama import Fore
-from river import compose, linear_model
+from rtxlib.storage.PipelineLib import naive_NN, naive_SGTR, naive_LR
 
 from rtxlib import info, warn
 from rtxlib.evaluation.OptimizationResult import add_time
@@ -27,7 +27,7 @@ def wrap_with_online_learning(wf, pretrain_rounds=3, strategy=start_evolutionary
     online_learning_enabled = wf.execution_strategy["online_learning"]
     if online_learning_enabled:
         info("Online Learning Enabled")
-        model = init_model_pipeline()
+        model = init_model_pipeline(naive_SGTR) # select a machine learning model
         info("# Pretrain ML Model", Fore.CYAN)
         for i in range(pretrain_rounds):
             strategy(wf)
@@ -70,15 +70,15 @@ def feed_new_values(model, opti, result):
         model.learn_one({'result_value_prev': result[i], 'opti_value': opti[i]}, opti[i + 1])
 
 
-def init_model_pipeline():
+def init_model_pipeline(pipeline):
     """
     Initialize an online learning model pipeline.
+    Args:
+        pipeline: pipeline of online learning model
     Returns: Online learning model.
 
     """
-    model = compose.Pipeline(
-        ('lin_reg', linear_model.LinearRegression())
-    )
+    model = pipeline
     return model
 
 
