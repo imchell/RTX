@@ -6,6 +6,8 @@ import pandas as pd
 import seaborn as sns
 import csv
 
+from rtxlib.evaluation.OptimizationResult import export_result_features
+import json
 
 def plot(wf):
     """ here we try to generate automatic plotting of the experiments results """
@@ -51,3 +53,24 @@ def plot(wf):
 
     else:
         info("> Cannot plot these results (RTX can only plot experiments of one of two variables for now)", Fore.CYAN)
+
+
+def export_feat(wf):
+    feat_file_dir = './' + str(wf.folder)
+    # try to access the results.csv values
+    try:
+        with open('./' + str(feat_file_dir) + '/results.csv', 'r') as csv_file:
+            reader = csv.reader(csv_file, dialect='excel')
+            header = next(reader)
+    except IOError:
+        error('Please first generate a "' + str(feat_file_dir) + '/results.csv" file by running the start command')
+        return
+    results_data_frame = pd.read_csv(str(feat_file_dir) + '/results.csv')
+    # 1 input -> 1 output variable case
+    if len(header) == 2:
+        info("> Found 1 knob, creating scatter plot...", Fore.CYAN)
+        feat_file = feat_file_dir + '/feat.json'
+        feat = export_result_features(results_data_frame, "result")
+        with open(feat_file, "w") as write_file:
+            json.dump(feat, write_file, indent=4)
+        info("> Feats saved at " + feat_file, Fore.CYAN)

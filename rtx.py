@@ -6,7 +6,7 @@ import rtxlib
 
 from rtxlib import info, error, debug
 from rtxlib.workflow import execute_workflow
-from rtxlib.report import plot
+from rtxlib.report import plot, export_feat
 
 
 def loadDefinition(folder):
@@ -41,6 +41,7 @@ if __name__ == '__main__':
         info("> Starting RTX experiment...")
         execute_workflow(wf)
         plot(wf)
+        export_feat(wf)
         exit(0)
     if len(sys.argv) > 2 and sys.argv[1] == "report":
         wf = loadDefinition(sys.argv[2])
