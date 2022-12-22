@@ -108,8 +108,6 @@ def online_model_execution(wf, model, current_opti, current_result, iteration=10
             "sample_size": wf.execution_strategy["sample_size"],
         })
         start_time = time.time()
-        info("result_value_prev " + str(result))
-        info("opti_value" + str(next_opti))
         next_opti = model.predict_one({'result_value_prev': result,
                                        'opti_value': next_opti})
         new_knobs = {'route_random_sigma': next_opti}
