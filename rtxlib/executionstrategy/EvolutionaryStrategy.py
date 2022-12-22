@@ -18,11 +18,10 @@ from deap import tools
 from rtxlib import info
 from rtxlib.evaluation.OptimizationResult import add_time
 from rtxlib.execution import experimentFunction
+from rtxlib.storage import State
 
 crowdnav_instance_number = 0
 
-result_values = []
-opti_values = []
 
 def start_evolutionary_strategy(wf):
     global original_primary_data_provider_topic
@@ -35,7 +34,6 @@ def start_evolutionary_strategy(wf):
 
     original_primary_data_provider_topic = wf.primary_data_provider["instance"].topic
     original_change_provider_topic = wf.change_provider["instance"].topic
-
 
     # we look at the ranges the user has specified in the knobs
     knobs = wf.execution_strategy["knobs"]
@@ -105,8 +103,8 @@ def ga(variables, range_tuples, wf):
 
     for ind, fit in zip(pop, fitnesses):
         info("> " + str(ind) + " -- " + str(fit))
-        opti_values.append(ind[0])
-        result_values.append(fit[0])
+        State.opti_values.append(ind[0])
+        State.result_values.append(fit[0])
         ind.fitness.values = fit
 
     for g in range(optimizer_iterations):
@@ -186,7 +184,8 @@ def evolutionary_execution(wf, opti_values, variables):
     # TODO should we create new/fresh CrowdNav instances for each iteration/generation? Otherwise, we use the same instance to evaluate across interations/generations to evaluate individiuals.
 
     if wf.execution_strategy["parallel_execution_of_individuals"]:
-        wf.primary_data_provider["instance"].topic = original_primary_data_provider_topic + "-" + str(crowdnav_instance_number)
+        wf.primary_data_provider["instance"].topic = original_primary_data_provider_topic + "-" + str(
+            crowdnav_instance_number)
         wf.change_provider["instance"].topic = original_change_provider_topic + "-" + str(crowdnav_instance_number)
         info("Listering on " + wf.primary_data_provider["instance"].topic)
         info("Posting changes to " + wf.change_provider["instance"].topic)

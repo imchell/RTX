@@ -6,7 +6,8 @@ from rtxlib.storage.PipelineLib import naive_NN, naive_SGTR, naive_LR
 from rtxlib import info, warn
 from rtxlib.evaluation.OptimizationResult import add_time
 from rtxlib.execution import experimentFunction
-from rtxlib.executionstrategy.EvolutionaryStrategy import start_evolutionary_strategy, result_values, opti_values
+from rtxlib.executionstrategy.EvolutionaryStrategy import start_evolutionary_strategy
+from rtxlib.storage import State
 
 
 def wrap_with_online_learning(wf, pretrain_rounds=3, strategy=start_evolutionary_strategy, rounds=3,
@@ -27,20 +28,20 @@ def wrap_with_online_learning(wf, pretrain_rounds=3, strategy=start_evolutionary
     online_learning_enabled = wf.execution_strategy["online_learning"]
     if online_learning_enabled:
         info("Online Learning Enabled")
-        model = init_model_pipeline(naive_SGTR)  # select a machine learning model
+        model = init_model_pipeline(naive_LR)  # select a machine learning model
         info("# Pretrain ML Model", Fore.CYAN)
         for i in range(pretrain_rounds):
             strategy(wf)
-            feed_new_values(model, opti_values, result_values)
+            feed_new_values(model, State.opti_values, State.result_values)
         for i in range(rounds):
             info("> Round      | " + str(i))
             strategy(wf)
-            info("> opti_values| " + str(opti_values))
-            info("> result     | " + str(result_values))
+            info("> opti_values| " + str(State.opti_values))
+            info("> result     | " + str(State.result_values))
             info("# Online Learning Model Updating", Fore.CYAN)
-            feed_new_values(model, opti_values, result_values)
+            feed_new_values(model, State.opti_values, State.result_values)
             info("# Online Learning Updated", Fore.CYAN)
-            online_model_execution(wf, model, opti_values[-1], result_values[-1], online_model_iteration)
+            online_model_execution(wf, model, State.opti_values[-1], State.result_values[-1], online_model_iteration)
             info("# End of Round ", Fore.CYAN)
     else:
         if (online_model_iteration - 1) % 5 is not 0:
