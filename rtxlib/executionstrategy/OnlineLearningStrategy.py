@@ -1,7 +1,7 @@
 import time
 
 from colorama import Fore
-from rtxlib.storage.PipelineLib import naive_NN, naive_SGTR, naive_LR
+from rtxlib.storage.PipelineLib import naive_LR, naive_KNNR
 
 from rtxlib import info, warn
 from rtxlib.evaluation.OptimizationResult import add_time
@@ -28,7 +28,7 @@ def wrap_with_online_learning(wf, pretrain_rounds=3, strategy=start_evolutionary
     online_learning_enabled = wf.execution_strategy["online_learning"]
     if online_learning_enabled:
         info("Online Learning Enabled")
-        model = init_model_pipeline(naive_LR)  # select a machine learning model
+        model = init_model_pipeline(naive_KNNR)  # select a machine learning model
         info("# Pretrain ML Model", Fore.CYAN)
         for i in range(pretrain_rounds):
             strategy(wf)
@@ -108,6 +108,8 @@ def online_model_execution(wf, model, current_opti, current_result, iteration=10
             "sample_size": wf.execution_strategy["sample_size"],
         })
         start_time = time.time()
+        info("result_value_prev " + str(result))
+        info("opti_value" + str(next_opti))
         next_opti = model.predict_one({'result_value_prev': result,
                                        'opti_value': next_opti})
         new_knobs = {'route_random_sigma': next_opti}
