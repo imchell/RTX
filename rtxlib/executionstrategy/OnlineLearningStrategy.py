@@ -4,7 +4,7 @@ from colorama import Fore
 from rtxlib.storage.PipelineLib import naive_LR, naive_KNNR
 
 from rtxlib import info, warn
-from rtxlib.evaluation.OptimizationResult import add_time
+from rtxlib.evaluation.OptimizationResult import add_time, record_cpu
 from rtxlib.execution import experimentFunction
 from rtxlib.executionstrategy.EvolutionaryStrategy import start_evolutionary_strategy
 from rtxlib.storage import State

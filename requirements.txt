@@ -8,3 +8,4 @@ Flask==2.2.2
 deap==1.3.3
 setuptools==60.2.0
 river==0.14.0
+psutil==5.9.4
