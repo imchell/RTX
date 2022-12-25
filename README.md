@@ -15,7 +15,7 @@ The [original guide](ORIGINAL_README.md) focuses more on setup, while this readm
 4. Download and install dependencies with **Python 2.7** in [CrowdNav](https://github.com/imchell/CrowdNav).
 5. Make sure spotify/kafka is running in Docker.
    ![spotify/kafka](illustrations/docker.png)
-6. Run `python run.py` in CrowdNav. The terminal will prompt
+6. Run `python run.py` in [CrowdNav](https://github.com/imchell/CrowdNav). The terminal will prompt
    ```shell
    #####################################
    #      Starting CrowdNav v0.2       #
