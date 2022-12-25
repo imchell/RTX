@@ -1,7 +1,7 @@
 import time
 
 from colorama import Fore
-from rtxlib.storage.PipelineLib import naive_LR, naive_KNNR
+from rtxlib.storage.PipelineLib import naive_LR, naive_KNNR, Bayesian_LR
 
 from rtxlib import info, warn
 from rtxlib.evaluation.OptimizationResult import add_time, record_cpu

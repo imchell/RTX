@@ -19,8 +19,7 @@ def export_result_features(results_df: pd.DataFrame, output_param: str, pretrain
     """
     mean = results_df[output_param].iloc[pretrain_rounds * 5:].mean()
     variance = results_df[output_param].iloc[pretrain_rounds * 5:].var()
-    return {"mean": mean, "variance": variance, "time": algorithm_running_time,
-            "CPU_utilization": statistics.mean(CPU_percentage_utilization)}
+    return {"mean": mean, "variance": variance, "time": algorithm_running_time}
 
 
 def add_time(time_span):
