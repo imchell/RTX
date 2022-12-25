@@ -8,16 +8,20 @@
 # where the number refers to the an instance of CrowdNav.
 #
 
-from colorama import Fore
-
-from rtxlib import info, error
-from rtxlib.execution import experimentFunction
-
 import random
-from deap import tools
+import time
+
+from colorama import Fore
 from deap import base, creator
+from deap import tools
+
+from rtxlib import info
+from rtxlib.evaluation.OptimizationResult import add_time
+from rtxlib.execution import experimentFunction
+from rtxlib.storage import State
 
 crowdnav_instance_number = 0
+
 
 def start_evolutionary_strategy(wf):
     global original_primary_data_provider_topic
@@ -30,7 +34,6 @@ def start_evolutionary_strategy(wf):
 
     original_primary_data_provider_topic = wf.primary_data_provider["instance"].topic
     original_change_provider_topic = wf.change_provider["instance"].topic
-
 
     # we look at the ranges the user has specified in the knobs
     knobs = wf.execution_strategy["knobs"]
@@ -73,6 +76,8 @@ def ga(variables, range_tuples, wf):
         population_size) + "\ncrossover_probability: " + str(crossover_probability) + "\nmutation_probability: " + str(
         mutation_probability))
 
+    start_time = time.time()
+
     creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
     creator.create("Individual", list, fitness=creator.FitnessMin)
 
@@ -88,13 +93,18 @@ def ga(variables, range_tuples, wf):
     toolbox.register("mate", tools.cxOnePoint)
     toolbox.register("mutate", mutate, variables=variables, range_tubles=range_tuples)
     toolbox.register("select", tools.selTournament, tournsize=3)
+    # This is where the optimization happens
     toolbox.register("evaluate", evaluate, vars=variables, ranges=range_tuples, wf=wf)
 
     # Evaluate the entire population
     fitnesses = map(toolbox.evaluate, pop)
 
+    add_time(time.time() - start_time)
+
     for ind, fit in zip(pop, fitnesses):
         info("> " + str(ind) + " -- " + str(fit))
+        State.opti_values.append(ind[0])
+        State.result_values.append(fit[0])
         ind.fitness.values = fit
 
     for g in range(optimizer_iterations):
@@ -105,7 +115,7 @@ def ga(variables, range_tuples, wf):
         offspring = map(toolbox.clone, offspring)
 
         # Apply crossover and mutation on the offspring
-        for child1, child2 in zip(offspring[::2], offspring[1::2]):
+        for child1, child2 in zip(list(offspring)[::2], list(offspring)[1::2]):
             if random.random() < crossover_probability:
                 toolbox.mate(child1, child2)
                 del child1.fitness.values
@@ -174,7 +184,8 @@ def evolutionary_execution(wf, opti_values, variables):
     # TODO should we create new/fresh CrowdNav instances for each iteration/generation? Otherwise, we use the same instance to evaluate across interations/generations to evaluate individiuals.
 
     if wf.execution_strategy["parallel_execution_of_individuals"]:
-        wf.primary_data_provider["instance"].topic = original_primary_data_provider_topic + "-" + str(crowdnav_instance_number)
+        wf.primary_data_provider["instance"].topic = original_primary_data_provider_topic + "-" + str(
+            crowdnav_instance_number)
         wf.change_provider["instance"].topic = original_change_provider_topic + "-" + str(crowdnav_instance_number)
         info("Listering on " + wf.primary_data_provider["instance"].topic)
         info("Posting changes to " + wf.change_provider["instance"].topic)

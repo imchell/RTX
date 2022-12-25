@@ -16,3 +16,4 @@ venv/
 examples/**/*.png
 examples/**/execution.log
 examples/**/results.csv
+examples/**/feat.json
